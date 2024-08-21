@@ -44,7 +44,7 @@ public class NetworkDesktopManagerClient extends JFrame implements ActionListene
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Connect to the server
-        clientSocket = new Socket("192.168.60.212", PORT); // Replace with the server IP address
+        clientSocket = new Socket("192.168.60.212", PORT); // Replace with the server IP addres
         input = new DataInputStream(clientSocket.getInputStream());
         output = new DataOutputStream(clientSocket.getOutputStream());
         chatArea.append("Connected to server!\n");
@@ -62,7 +62,7 @@ public class NetworkDesktopManagerClient extends JFrame implements ActionListene
             }
             chatField.setText("");
         } else if (e.getSource() == fileButton) {
-            sendFiles(); // Updated method name
+            sendFiles(); 
         } else if (e.getSource() == desktopButton) {
             sendDesktop();
         }
@@ -70,12 +70,12 @@ public class NetworkDesktopManagerClient extends JFrame implements ActionListene
 
     private void sendFiles() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setMultiSelectionEnabled(true); // Allow multiple files to be selected
+        fileChooser.setMultiSelectionEnabled(true); 
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File[] selectedFiles = fileChooser.getSelectedFiles();
             try {
-                // Send the number of files being sent
+                
                 output.writeInt(selectedFiles.length);
 
                 for (File file : selectedFiles) {
@@ -83,7 +83,7 @@ public class NetworkDesktopManagerClient extends JFrame implements ActionListene
                     long fileSize = file.length();
                     output.writeLong(fileSize);
 
-                    // Send file contents
+                    
                     FileInputStream fileInputStream = new FileInputStream(file);
                     byte[] buffer = new byte[4096];
                     int bytesRead;
@@ -102,32 +102,32 @@ public class NetworkDesktopManagerClient extends JFrame implements ActionListene
 
 private void sendDesktop() {
     try {
-        // Get the desktop resolution
+        
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = screenSize.width;
         int height = screenSize.height;
 
-        // Create a Robot object to capture the desktop
+        
         Robot robot = new Robot();
 
-        // Create a BufferedImage to store the desktop image
+        
         BufferedImage desktopImage = robot.createScreenCapture(new Rectangle(0, 0, width, height));
 
-        // Convert the BufferedImage to a byte array
+        
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(desktopImage, "png", baos);
         byte[] desktopBytes = baos.toByteArray();
 
         
-// Break the image into smaller packets and send them in a loop
-        int packetSize = 1024; // Adjust this value based on your network conditions
+
+        int packetSize = 1024; 
         int numPackets = (int) Math.ceil((double) desktopBytes.length / packetSize);
-        output.writeInt(numPackets); // Send the number of packets
+        output.writeInt(numPackets);
 
         for (int i = 0; i < numPackets; i++) {
             byte[] packet = new byte[packetSize];
             System.arraycopy(desktopBytes, i * packetSize, packet, 0, Math.min(packetSize, desktopBytes.length - i * packetSize));
-            output.write(packet); // Send the packet
+            output.write(packet); 
 
         }
 
