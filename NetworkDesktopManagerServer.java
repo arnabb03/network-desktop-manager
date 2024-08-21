@@ -50,7 +50,7 @@ public class NetworkDesktopManagerServer extends JFrame implements ActionListene
         serverSocket = new ServerSocket(PORT);
         chatArea.append("Waiting for client to connect...\n");
 
-        // Accept client connection
+        
         clientSocket = serverSocket.accept();
         chatArea.append("Client connected");
         input = new DataInputStream(clientSocket.getInputStream());
@@ -77,7 +77,7 @@ public class NetworkDesktopManagerServer extends JFrame implements ActionListene
 
     private void receiveFiles() {
         try {
-            int numFiles = input.readInt(); // Read the number of files being sent
+            int numFiles = input.readInt(); 
             for (int i = 0; i < numFiles; i++) {
                 long fileSize = input.readLong();
                 byte[] buffer = new byte[4096];
@@ -96,24 +96,24 @@ public class NetworkDesktopManagerServer extends JFrame implements ActionListene
     }
 
     
-        // Implement the method for receiving desktop here
+
         private void receiveDesktop() {
             try {
-                int numPackets = input.readInt(); // Receive the number of packets
+                int numPackets = input.readInt(); 
                 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
         
                 for (int i = 0; i < numPackets; i++) {
-                    byte[] packet = new byte[1024]; // Adjust this value based on the packet size used by the client
-                    int bytesRead = input.read(packet); // Read a packet of image data
-                    baos.write(packet, 0, bytesRead); // Write the received bytes to the output stream
+                    byte[] packet = new byte[1024]; 
+                    int bytesRead = input.read(packet); 
+                    baos.write(packet, 0, bytesRead); 
                 }
         
                 byte[] desktopBytes = baos.toByteArray();
                 ByteArrayInputStream bais = new ByteArrayInputStream(desktopBytes);
                 BufferedImage desktopImage = ImageIO.read(bais);
         
-                // Display the desktop image in a new window
+                
                 JFrame imageFrame = new JFrame("Received Desktop Image");
                 JLabel imageLabel = new JLabel(new ImageIcon(desktopImage));
                 imageFrame.getContentPane().add(imageLabel);
